@@ -4,7 +4,7 @@ import requests
 import argparse
 
 
-def main(short_name,apn_segment_code,buyer_seat_id):
+def main(segment_id,buyer_seat_id):
     cookies = {}
     #APN API credentials
     credential = {"env_type":"1296","data":"{\"auth\": {\"username\":\"adsafe_admin\",\"password\": \"alksjdflk\"}}"}
@@ -12,9 +12,6 @@ def main(short_name,apn_segment_code,buyer_seat_id):
     
     #Authenticate APN API, obtain cookies
     cookies = authenticate(credential)
-
-    #Create Segment in APN using "Segment Service". Retrieve segment id (can be searched for in console)
-    segment_id = create_segment(short_name,apn_segment_code,cookies)
 
     #Authenticate APN DMP API, obtain cookies
     cookies = authenticate(dmp_credential)
@@ -41,13 +38,6 @@ def authenticate(credential):
     response = requests.post('https://api.adnxs.com/auth', cookies=cookies, data=credential['data'])
     return response.cookies
 
-def create_segment(short_name,apn_segment_code,cookies):
-    json_request = '{"segment":{"member_id":1296,"short_name":"'+short_name+'","code":"'+apn_segment_code+'","price":0.00}}'
-    response = requests.post('https://api.adnxs.com/segment/1296', cookies=cookies, data=json_request)
-    print(response.text)
-    response_json = response.json()
-    return response_json['response']['segment']['id']
-
 def map_to_kw_billing_cat(segment_id,cookies):
     json_request = '{"segment-billing-category":{"active":true,"data_provider_id":1296,"data_category_id":8765,"segment_id":'\
         +str(segment_id)+',"is_public":false}}'
@@ -70,13 +60,13 @@ def append_to_data_sharing_seg_list(buyer_seat_id,member_data_sharing_id,segment
     print(response.text)
 
 def read_csv():
-    new_data = []
+    segments = []
     with open(sys.argv[1]) as csvFile:
         rowReader = csv.reader(csvFile, delimiter=',', quotechar='|')
         for row in rowReader:
-            new_data.append([row[0],row[1],row[2]])
+            segments.append(row[0])
     
-    return new_data
+    return segments
 
 if __name__ == "__main__":
     '''parser = argparse.ArgumentParser(description="Deploy a keyword segment to a buyer seat on Appnexus")
@@ -89,5 +79,6 @@ if __name__ == "__main__":
                         help="Enter the Buyer Seat ID. Example: 6926")
         args = parser.parse_args()'''
     data = read_csv()
-    for row in data:
-        main(row[0],row[1],row[2])   
+    buyer_seat = sys.argv[2]
+    for segment in data:
+        main(segment,buyer_seat)
