@@ -47,7 +47,7 @@ def append_to_data_sharing_seg_list(buyer_seat_id,member_data_sharing_id,segment
 
 def read_csv():
     segments = []
-    with open(sys.argv[1]) as csvFile:
+    with open(sys.argv[1],'r', encoding='utf-8') as csvFile:
         rowReader = csv.reader(csvFile, delimiter=',', quotechar='|')
         for row in rowReader:
             segments.append(row[0])
