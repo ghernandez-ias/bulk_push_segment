@@ -25,9 +25,6 @@ def main(segment_id,buyer_seat_id):
     #Append the segment to the data sharing record using Member Data Sharing Service
     append_to_data_sharing_seg_list(buyer_seat_id,member_data_sharing_id,segment_id,cookies)
 
-    print("\nAPN Segment ID: "+str(segment_id)+'\n')
-    print("\nAPN DMP ID: "+str(apn_dmp_id)+'\n')
-
 def authenticate(credential):
     cookies = {}
     response = requests.post('https://api.adnxs.com/auth', cookies=cookies, data=credential['data'])
@@ -37,14 +34,6 @@ def authenticate(credential):
     cookies = {}
     response = requests.post('https://api.adnxs.com/auth', cookies=cookies, data=credential['data'])
     return response.cookies
-
-def map_to_kw_billing_cat(segment_id,cookies):
-    json_request = '{"segment-billing-category":{"active":true,"data_provider_id":1296,"data_category_id":8765,"segment_id":'\
-        +str(segment_id)+',"is_public":false}}'
-    response = requests.post('https://api.adnxs.com/segment-billing-category?member_id=1296', cookies=cookies, data=json_request)
-    print(response.text)
-    response_json = response.json()
-    return response_json['response']['segment-billing-category'][0]['id']
 
 def get_member_data_sharing_id(buyer_seat_id,cookies):
     response = requests.get('https://api.adnxs.com/member-data-sharing?data_member_id=1296&buyer_member_id='+str(buyer_seat_id), cookies=cookies)
