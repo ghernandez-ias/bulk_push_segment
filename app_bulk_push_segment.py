@@ -16,9 +16,6 @@ def main(segment_id,buyer_seat_id):
     #Authenticate APN DMP API, obtain cookies
     cookies = authenticate(dmp_credential)
 
-    #POST segment into keyword billing category using the "Segment Billing Category Service". Obtain APN DMP ID 
-    apn_dmp_id = map_to_kw_billing_cat(segment_id,cookies)
-
     #Use buyer seat id to obtain data member sharing id using the "Member Data Sharing Service"
     member_data_sharing_id = get_member_data_sharing_id(buyer_seat_id,cookies)
 
